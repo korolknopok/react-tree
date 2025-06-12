@@ -1,10 +1,10 @@
-interface TreeData {
+export interface TreeData {
     id : number;
     name : string;
     children?: TreeData[];
 }
 
-const treeData: TreeData[] = [
+export const treeData: TreeData[] = [
     {
         id: 1,
         name: 'Node 1',
