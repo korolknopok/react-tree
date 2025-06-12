@@ -1,0 +1,14 @@
+.node {
+    margin-left: 20px;
+}
+
+.node-label {
+    cursor: pointer;
+    padding: 5px;
+    display: inline-block;
+}
+
+.node-children {
+    list-style-type: none;
+    padding-left: 20px;
+}
