@@ -12,3 +12,9 @@
     list-style-type: none;
     padding-left: 20px;
 }
+
+.node-label.selected {
+    background-color: #377094;
+    color: white;
+    border-radius: 5px;
+}
