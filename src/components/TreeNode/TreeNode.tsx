@@ -1,7 +1,6 @@
 import type {TreeData} from "../../data/treeData.ts";
-import {useContext} from "react";
-import {SelectedNodeContext} from "../../SelectedNode.ts";
 import './TreeNode.css';
+import {useNodeStore} from "../../useNodeStore.ts";
 
 interface TreeNodeProps {
     id: number;
@@ -10,7 +9,7 @@ interface TreeNodeProps {
 }
 
 export const TreeNode =({id, name, children}: TreeNodeProps) => {
-    const  {selectedNodeId, setSelectedNodeId} = useContext(SelectedNodeContext);
+    const  {selectedNodeId, setSelectedNodeId} = useNodeStore();
 
     const handleNodeClick = () => {
         setSelectedNodeId(selectedNodeId === id ? null : id);
