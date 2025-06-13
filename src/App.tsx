@@ -82,6 +82,11 @@ export const App = () => {
         editNode(selectedNodeId, newName);
     }
 
+    const handleReset = () => {
+        setTree(JSON.parse(JSON.stringify(treeData)));
+        setSelectedNodeId(null);
+    }
+
     return (
         <div className="app">
             <div className="container">
@@ -91,6 +96,7 @@ export const App = () => {
                     <button onClick={handleAdd}> Add</button>
                     <button onClick={handleRemove} disabled={selectedNodeId === null}> Delete</button>
                     <button onClick={handleEdit} disabled={selectedNodeId === null}> Edit</button>
+                    <button onClick={handleReset}> Reset</button>
                 </div>
             </div>
         </div>
