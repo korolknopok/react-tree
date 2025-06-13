@@ -7,6 +7,7 @@ import {useNodeStore} from "./useNodeStore.ts";
 export const App = () => {
     const [tree, setTree] = useState<TreeData[]>(JSON.parse(JSON.stringify(treeData)));
     const [counter, setCounter] = useState<number>(5);
+    const {selectedNodeId, setSelectedNodeId} = useNodeStore();
 
     const addChildToNode = (parentId: number | null, newNode: TreeData) => {
         const updatedTree = JSON.parse(JSON.stringify(tree));
@@ -29,6 +30,23 @@ export const App = () => {
         setTree(updatedTree);
     }
 
+    const deleteNodeById = (id: number | null) => {
+        if (id === null) return;
+        const updatedTree = JSON.parse(JSON.stringify(tree));
+        const walkAndRemove = (nodes: TreeData[]) => {
+            for (let i = 0; i < nodes.length; i++) {
+                if (nodes[i].id === id) {
+                    nodes.splice(i, 1);
+                    return;
+                }
+                if (nodes[i].children) walkAndRemove(nodes[i].children);
+            }
+        };
+        walkAndRemove(updatedTree);
+        setTree(updatedTree);
+        setSelectedNodeId(null);
+    }
+
     const handleAdd = () => {
         const newNode: TreeData = {
             id: counter,
@@ -38,6 +56,10 @@ export const App = () => {
         setCounter(counter + 1);
     }
 
+    const handleRemove = () => {
+        deleteNodeById(selectedNodeId);
+    }
+
     return (
         <div className="app">
             <div className="container">
@@ -45,6 +67,7 @@ export const App = () => {
                 <Tree data={tree}/>
                 <div className="buttons">
                     <button onClick={handleAdd}> Add</button>
+                    <button onClick={handleRemove} disabled={selectedNodeId === null}> Delete</button>
                 </div>
             </div>
         </div>
