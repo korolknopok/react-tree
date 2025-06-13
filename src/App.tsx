@@ -47,6 +47,23 @@ export const App = () => {
         setSelectedNodeId(null);
     }
 
+    const editNode = (id: number | null, newName: string) => {
+        if (id === null) return;
+        const updatedTree = JSON.parse(JSON.stringify(tree));
+        const walkAndEdit = (nodes: TreeData[]) => {
+            for (let node of nodes) {
+                if (node.id === id) {
+                    node.name = newName;
+                    return;
+                }
+                if (node.children) walkAndEdit(node.children);
+            }
+        };
+        walkAndEdit(updatedTree);
+        setTree(updatedTree);
+
+    }
+
     const handleAdd = () => {
         const newNode: TreeData = {
             id: counter,
@@ -60,6 +77,11 @@ export const App = () => {
         deleteNodeById(selectedNodeId);
     }
 
+    const handleEdit = () => {
+        const newName = prompt('Enter new name:')?.trim() || 'Node';
+        editNode(selectedNodeId, newName);
+    }
+
     return (
         <div className="app">
             <div className="container">
@@ -68,6 +90,7 @@ export const App = () => {
                 <div className="buttons">
                     <button onClick={handleAdd}> Add</button>
                     <button onClick={handleRemove} disabled={selectedNodeId === null}> Delete</button>
+                    <button onClick={handleEdit} disabled={selectedNodeId === null}> Edit</button>
                 </div>
             </div>
         </div>
