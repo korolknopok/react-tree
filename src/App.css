@@ -14,3 +14,14 @@
 .container h2 {
     margin-top: 0;
 }
+
+.buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.buttons button {
+    padding: 8px 16px;
+    cursor: pointer;
+}
