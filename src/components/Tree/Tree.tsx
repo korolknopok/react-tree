@@ -1,11 +1,12 @@
 import type {TreeData} from "../../data/treeData.ts";
 import {TreeNode} from "../TreeNode/TreeNode.tsx";
+import {memo} from "react";
 
 interface TreeProps {
     data: TreeData[];
 }
 
-export const Tree = ({ data } : TreeProps) => {
+export const Tree = memo(({ data } : TreeProps) => {
     return (
         <div className="tree">
             {data.map((node) => (
@@ -18,4 +19,4 @@ export const Tree = ({ data } : TreeProps) => {
             ))}
         </div>
     );
-};
+});

@@ -1,5 +1,6 @@
 import {create} from 'zustand';
 import {treeData, type TreeData} from "./data/treeData.ts";
+import {produce} from "immer";
 
 interface NodeState {
     selectedNodeId: number | null;
@@ -12,70 +13,69 @@ interface NodeState {
     reset: () => void,
 }
 
-export const useNodeStore = create<NodeState>((set, get) => ({
+export const useNodeStore = create<NodeState>((set) => ({
     selectedNodeId: null,
     setSelectedNodeId: (id) => set({selectedNodeId: id}),
-    tree: JSON.parse(JSON.stringify(treeData)),
+    tree: treeData,
     counter: 5,
-    addChildToNode: (parentId) => {
-        const newNode = {id: get().counter, name: `Node ${get().counter}`};
-        set((state) => {
-            const updatedTree = JSON.parse(JSON.stringify(state.tree));
-            const walkAndAdd = (nodes: TreeData[]) => {
+    addChildToNode: (parentId) =>
+        set(
+            produce((state: NodeState) => {
+                const newNode = {id: state.counter, name: `Node ${state.counter}`};
                 if (parentId === null) {
-                    nodes.push(newNode);
-                    return;
+                    state.tree.push(newNode);
+                } else {
+                    const walkAndAdd = (nodes: TreeData[]) => {
+                        for (let node of nodes) {
+                            if (node.id === parentId) {
+                                if (!node.children) node.children = [];
+                                node.children.push(newNode);
+                                return;
+                            }
+                            if (node.children) walkAndAdd(node.children);
+                        }
+                    };
+                    walkAndAdd(state.tree);
                 }
-                for (let node of nodes) {
-                    if (node.id === parentId) {
-                        if (!node.children)
-                            node.children = [];
-                        node.children.push(newNode);
-                        return;
+                state.counter += 1;
+            })
+        ),
+    deleteNodeById: (id: number | null) =>
+        set(
+            produce((state: NodeState) => {
+                if (id === null) return;
+                const walkAndRemove = (nodes: TreeData[]) => {
+                    for (let i = 0; i < nodes.length; i++) {
+                        if (nodes[i].id === id) {
+                            nodes.splice(i, 1);
+                            return;
+                        }
+                        if (nodes[i].children) walkAndRemove(nodes[i].children);
                     }
-                    if (node.children) walkAndAdd(node.children);
-                }
-            };
-            walkAndAdd(updatedTree);
-            return {tree: updatedTree, counter: state.counter + 1};
-        })
-    },
-    deleteNodeById: (id: number | null) => {
-        if (id === null) return;
-        set((state) => {
-            const updatedTree = JSON.parse(JSON.stringify(state.tree));
-            const walkAndRemove = (nodes: TreeData[]) => {
-                for (let i = 0; i < nodes.length; i++) {
-                    if (nodes[i].id === id) {
-                        nodes.splice(i, 1);
-                        return;
+                };
+                walkAndRemove(state.tree);
+                state.selectedNodeId = null;
+            })
+        ),
+    editNode: (id: number | null, newName: string) =>
+        set(
+            produce((state: NodeState) => {
+                if (id === null) return;
+                const walkAndEdit = (nodes: TreeData[]) => {
+                    for (let node of nodes) {
+                        if (node.id === id) {
+                            node.name = newName;
+                            return;
+                        }
+                        if (node.children) walkAndEdit(node.children);
                     }
-                    if (nodes[i].children) walkAndRemove(nodes[i].children);
-                }
-            };
-            walkAndRemove(updatedTree);
-            return {tree: updatedTree, selectedNodeId: null};
-        })
-    },
-    editNode: (id: number | null, newName: string) => {
-        if (id === null) return;
-        set((state) => {
-            const updatedTree = JSON.parse(JSON.stringify(state.tree));
-            const walkAndEdit = (nodes: TreeData[]) => {
-                for (let node of nodes) {
-                    if (node.id === id) {
-                        node.name = newName;
-                        return;
-                    }
-                    if (node.children) walkAndEdit(node.children);
-                }
-            };
-            walkAndEdit(updatedTree);
-            return {tree: updatedTree}
-        })
-    },
+                };
+                walkAndEdit(state.tree);
+            })
+        ),
     reset: () => set({
-        tree: JSON.parse(JSON.stringify(treeData)),
+        tree: treeData,
         selectedNodeId: null,
+        counter: 5,
     }),
 }));
