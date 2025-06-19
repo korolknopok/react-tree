@@ -13,6 +13,24 @@ interface NodeState {
     reset: () => void,
 }
 
+const findNodeAndParent = (
+    nodes: TreeData[],
+    id: number
+): { node: TreeData | null; parent: TreeData | null; parentArray: TreeData[] | null; index: number } => {
+    for (let i = 0; i < nodes.length; i++) {
+        if (nodes[i].id === id) {
+            return {node: nodes[i], parent: null, parentArray: nodes, index: i};
+        }
+        if (nodes[i].children) {
+            const result = findNodeAndParent(nodes[i].children, id);
+            if (result.node) {
+                return {...result, parent: nodes[i]};
+            }
+        }
+    }
+    return {node: null, parent: null, parentArray: null, index: -1};
+};
+
 export const useNodeStore = create<NodeState>((set) => ({
     selectedNodeId: null,
     setSelectedNodeId: (id) => set({selectedNodeId: id}),
@@ -25,17 +43,11 @@ export const useNodeStore = create<NodeState>((set) => ({
                 if (parentId === null) {
                     state.tree.push(newNode);
                 } else {
-                    const walkAndAdd = (nodes: TreeData[]) => {
-                        for (let node of nodes) {
-                            if (node.id === parentId) {
-                                if (!node.children) node.children = [];
-                                node.children.push(newNode);
-                                return;
-                            }
-                            if (node.children) walkAndAdd(node.children);
-                        }
-                    };
-                    walkAndAdd(state.tree);
+                    const { node } = findNodeAndParent(state.tree, parentId);
+                    if (node) {
+                        if (!node.children) node.children = [];
+                        node.children.push(newNode);
+                    }
                 }
                 state.counter += 1;
             })
@@ -44,33 +56,21 @@ export const useNodeStore = create<NodeState>((set) => ({
         set(
             produce((state: NodeState) => {
                 if (id === null) return;
-                const walkAndRemove = (nodes: TreeData[]) => {
-                    for (let i = 0; i < nodes.length; i++) {
-                        if (nodes[i].id === id) {
-                            nodes.splice(i, 1);
-                            return;
-                        }
-                        if (nodes[i].children) walkAndRemove(nodes[i].children);
-                    }
-                };
-                walkAndRemove(state.tree);
-                state.selectedNodeId = null;
+                const { parentArray, index } = findNodeAndParent(state.tree, id);
+                if (parentArray && index !== -1) {
+                    parentArray.splice(index, 1);
+                    state.selectedNodeId = null;
+                }
             })
         ),
     editNode: (id: number | null, newName: string) =>
         set(
             produce((state: NodeState) => {
                 if (id === null) return;
-                const walkAndEdit = (nodes: TreeData[]) => {
-                    for (let node of nodes) {
-                        if (node.id === id) {
-                            node.name = newName;
-                            return;
-                        }
-                        if (node.children) walkAndEdit(node.children);
-                    }
-                };
-                walkAndEdit(state.tree);
+                const { node } = findNodeAndParent(state.tree, id);
+                if (node) {
+                    node.name = newName;
+                }
             })
         ),
     reset: () => set({
