@@ -22,6 +22,7 @@ const findNodeAndParent = (
             return {node: nodes[i], parent: null, parentArray: nodes, index: i};
         }
         if (nodes[i].children) {
+            // @ts-expect-error
             const result = findNodeAndParent(nodes[i].children, id);
             if (result.node) {
                 return {...result, parent: nodes[i]};
