@@ -1,7 +1,7 @@
 export interface TreeData {
     id: number;
     name: string;
-    children?: TreeData[];
+    children: TreeData[];
 }
 
 export const treeData: TreeData[] = [
@@ -16,6 +16,7 @@ export const treeData: TreeData[] = [
                     {
                         id: 3,
                         name: 'Node 3',
+                        children: []
                     },
                 ],
             },
@@ -24,5 +25,6 @@ export const treeData: TreeData[] = [
     {
         id: 4,
         name: 'Node 4',
+        children: []
     },
 ];

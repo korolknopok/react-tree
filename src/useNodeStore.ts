@@ -22,7 +22,6 @@ const findNodeAndParent = (
             return {node: nodes[i], parent: null, parentArray: nodes, index: i};
         }
         if (nodes[i].children) {
-            // @ts-expect-error
             const result = findNodeAndParent(nodes[i].children, id);
             if (result.node) {
                 return {...result, parent: nodes[i]};
@@ -40,7 +39,11 @@ export const useNodeStore = create<NodeState>((set) => ({
     addChildToNode: (parentId) =>
         set(
             produce((state: NodeState) => {
-                const newNode = {id: state.counter, name: `Node ${state.counter}`};
+                const newNode = {
+                    id: state.counter,
+                    name: `Node ${state.counter}`,
+                    children: []
+                };
                 if (parentId === null) {
                     state.tree.push(newNode);
                 } else {
