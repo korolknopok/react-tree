@@ -39,7 +39,11 @@ export const useNodeStore = create<NodeState>((set) => ({
     addChildToNode: (parentId) =>
         set(
             produce((state: NodeState) => {
-                const newNode = {id: state.counter, name: `Node ${state.counter}`};
+                const newNode = {
+                    id: state.counter,
+                    name: `Node ${state.counter}`,
+                    children: []
+                };
                 if (parentId === null) {
                     state.tree.push(newNode);
                 } else {
