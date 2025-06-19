@@ -1,6 +1,7 @@
 import type {TreeData} from "../../data/treeData.ts";
 import './TreeNode.css';
 import {useNodeStore} from "../../useNodeStore.ts";
+import {memo} from "react";
 
 interface TreeNodeProps {
     id: number;
@@ -8,8 +9,9 @@ interface TreeNodeProps {
     children?: TreeData[];
 }
 
-export const TreeNode =({id, name, children}: TreeNodeProps) => {
-    const  {selectedNodeId, setSelectedNodeId} = useNodeStore();
+export const TreeNode = memo(({id, name, children}: TreeNodeProps) => {
+    const selectedNodeId = useNodeStore(state => state.selectedNodeId)
+    const setSelectedNodeId = useNodeStore(state => state.setSelectedNodeId)
 
     const handleNodeClick = () => {
         setSelectedNodeId(selectedNodeId === id ? null : id);
@@ -38,4 +40,4 @@ export const TreeNode =({id, name, children}: TreeNodeProps) => {
             )}
         </div>
     )
-}
+});

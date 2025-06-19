@@ -1,27 +1,28 @@
 import './App.css';
 import {Tree} from "./components/Tree/Tree.tsx";
 import {useNodeStore} from "./useNodeStore.ts";
+import {memo, useCallback} from "react";
 
-export const App = () => {
+export const App = memo(() => {
     const {tree, selectedNodeId, addChildToNode, deleteNodeById, editNode, reset} = useNodeStore();
 
 
-    const handleAdd = () => {
+    const handleAdd = useCallback(() => {
         addChildToNode(selectedNodeId);
-    }
+    }, [selectedNodeId, addChildToNode]);
 
-    const handleRemove = () => {
+    const handleRemove = useCallback(() => {
         deleteNodeById(selectedNodeId);
-    }
+    },[selectedNodeId, deleteNodeById]);
 
-    const handleEdit = () => {
+    const handleEdit = useCallback(() => {
         const newName = prompt('Enter new name:')?.trim() || 'Node';
         editNode(selectedNodeId, newName);
-    }
+    }, [selectedNodeId, editNode]);
 
-    const handleReset = () => {
+    const handleReset = useCallback(() => {
         reset();
-    }
+    }, [reset]);
 
     return (
         <div className="app">
@@ -37,4 +38,4 @@ export const App = () => {
             </div>
         </div>
     );
-};
+});
