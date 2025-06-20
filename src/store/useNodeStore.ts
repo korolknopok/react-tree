@@ -11,6 +11,8 @@ interface NodeState {
     deleteNodeById: (id: number | null) => void,
     editNode: (id: number | null, newName: string) => void,
     reset: () => void,
+    editingNodeId: number | null,
+    setEditingNodeId: (id: number | null) => void;
 }
 
 const findNodeAndParent = (
@@ -49,9 +51,10 @@ export const useNodeStore = create<NodeState>((set) => {
         addChildToNode: (parentId) =>
             set(
                 produce((state: NodeState) => {
+                    const newId = state.counter;
                     const newNode = {
                         id: state.counter,
-                        name: `Node ${state.counter}`,
+                        name: '',
                         children: [],
                     };
                     if (parentId === null) {
@@ -64,6 +67,7 @@ export const useNodeStore = create<NodeState>((set) => {
                         }
                     }
                     state.counter += 1;
+                    state.editingNodeId = newId;
                 })
             ),
         deleteNodeById: (id: number | null) =>
@@ -92,5 +96,7 @@ export const useNodeStore = create<NodeState>((set) => {
             selectedNodeId: null,
             counter: initialCounter,
         }),
+        editingNodeId: null,
+        setEditingNodeId: (id) => set({editingNodeId: id})
     };
 });
