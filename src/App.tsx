@@ -1,6 +1,6 @@
 import './App.css';
 import {Tree} from "./components/Tree/Tree.tsx";
-import {useNodeStore} from "./useNodeStore.ts";
+import {useNodeStore} from "./store/useNodeStore.ts";
 import {memo, useCallback} from "react";
 
 export const App = memo(() => {

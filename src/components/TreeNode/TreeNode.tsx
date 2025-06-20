@@ -1,6 +1,6 @@
 import type {TreeData} from "../../data/treeData.ts";
 import './TreeNode.css';
-import {useNodeStore} from "../../useNodeStore.ts";
+import {useNodeStore} from "../../store/useNodeStore.ts";
 import {memo} from "react";
 
 interface TreeNodeProps {

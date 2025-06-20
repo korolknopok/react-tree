@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { treeData } from '../../data/treeData';
-import { useNodeStore } from '../../useNodeStore';
+import { useNodeStore } from '../../store/useNodeStore.ts';
 import { Tree } from '../Tree/Tree';
 
 describe('Tree component', () => {
