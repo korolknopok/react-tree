@@ -14,6 +14,7 @@ export const Tree = memo(({ data } : TreeProps) => {
                     key={node.id}
                     id={node.id}
                     name={node.name}
+                    parentId={undefined}
                     children={node.children}
                 />
             ))}

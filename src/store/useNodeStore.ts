@@ -15,22 +15,22 @@ interface NodeState {
     setEditingNodeId: (id: number | null) => void;
 }
 
-const findNodeAndParent = (
+const findNode = (
     nodes: TreeData[],
-    id: number
-): { node: TreeData | null; parent: TreeData | null; parentArray: TreeData[] | null; index: number } => {
-    for (let i = 0; i < nodes.length; i++) {
-        if (nodes[i].id === id) {
-            return {node: nodes[i], parent: null, parentArray: nodes, index: i};
+    id: number,
+): TreeData | null => {
+    for (const node of nodes) {
+        if (node.id === id) {
+            return node;
         }
-        if (nodes[i].children) {
-            const result = findNodeAndParent(nodes[i].children, id);
-            if (result.node) {
-                return {...result, parent: nodes[i]};
+        if (node.children?.length) {
+            const result = findNode(node.children, id);
+            if (result) {
+                return result
             }
         }
     }
-    return {node: null, parent: null, parentArray: null, index: -1};
+    return null;
 };
 
 const findMaxId = (nodes: TreeData[]): number => {
@@ -45,7 +45,7 @@ export const useNodeStore = create<NodeState>((set) => {
 
     return {
         selectedNodeId: null,
-        setSelectedNodeId: (id) => set({ selectedNodeId: id }),
+        setSelectedNodeId: (id) => set({selectedNodeId: id}),
         tree: treeData,
         counter: initialCounter,
         addChildToNode: (parentId) =>
@@ -55,12 +55,13 @@ export const useNodeStore = create<NodeState>((set) => {
                     const newNode = {
                         id: state.counter,
                         name: '',
+                        parentId: parentId === null ? undefined : parentId,
                         children: [],
                     };
                     if (parentId === null) {
                         state.tree.push(newNode);
                     } else {
-                        const { node } = findNodeAndParent(state.tree, parentId);
+                        const node = findNode(state.tree, parentId);
                         if (node) {
                             if (!node.children) node.children = [];
                             node.children.push(newNode);
@@ -74,18 +75,24 @@ export const useNodeStore = create<NodeState>((set) => {
             set(
                 produce((state: NodeState) => {
                     if (id === null) return;
-                    const { parentArray, index } = findNodeAndParent(state.tree, id);
-                    if (parentArray && index !== -1) {
-                        parentArray.splice(index, 1);
-                        state.selectedNodeId = null;
+                    const node = findNode(state.tree, id);
+                    if (!node) return;
+                    if (node.parentId) {
+                        const parent = findNode(state.tree, node.parentId);
+                        if (parent) {
+                            parent.children = parent.children.filter(child => child.id !== id);
+                        }
+                    } else {
+                        state.tree = state.tree.filter(n => n.id !== id);
                     }
+                    state.selectedNodeId = null;
                 })
             ),
         editNode: (id: number | null, newName: string) =>
             set(
                 produce((state: NodeState) => {
                     if (id === null) return;
-                    const { node } = findNodeAndParent(state.tree, id);
+                    const node = findNode(state.tree, id);
                     if (node) {
                         node.name = newName;
                     }

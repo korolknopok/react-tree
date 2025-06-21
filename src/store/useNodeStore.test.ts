@@ -2,8 +2,8 @@ import {useNodeStore} from "./useNodeStore.ts";
 
 jest.mock('../data/treeData', () => ({
     treeData: [
-        { id: 1, name: 'Корневой узел 1', children: [{ id: 2, name: 'Дочерний узел 1', children: [] }] },
-        { id: 3, name: 'Корневой узел 2', children: [{ id: 4, name: 'Дочерний узел 2', children: [] }] },
+        { id: 1, name: 'Корневой узел 1', children: [{ id: 2, name: 'Дочерний узел 1', parentId: 1, children: [] }] },
+        { id: 3, name: 'Корневой узел 2', children: [{ id: 4, name: 'Дочерний узел 2', parentId: 3, children: [] }] },
         { id: 5, name: 'Корневой узел 3', children: [] },
     ],
 }));
@@ -18,8 +18,8 @@ describe('useNodeStore', () => {
         expect(state.selectedNodeId).toBeNull();
         expect(state.counter).toBe(6);
         expect(state.tree).toEqual([
-            { id: 1, name: 'Корневой узел 1', children: [{ id: 2, name: 'Дочерний узел 1', children: [] }] },
-            { id: 3, name: 'Корневой узел 2', children: [{ id: 4, name: 'Дочерний узел 2', children: [] }] },
+            { id: 1, name: 'Корневой узел 1', children: [{ id: 2, name: 'Дочерний узел 1', parentId: 1, children: [] }] },
+            { id: 3, name: 'Корневой узел 2', children: [{ id: 4, name: 'Дочерний узел 2', parentId: 3, children: [] }] },
             { id: 5, name: 'Корневой узел 3', children: [] },
         ]);
     });
@@ -50,7 +50,7 @@ describe('useNodeStore', () => {
         const state = useNodeStore.getState();
         const parentNode = state.tree.find((node) => node.id === 1);
         expect(parentNode?.children).toHaveLength(2);
-        expect(parentNode?.children?.[1]).toEqual({ id: 6, name: '', children: [] });
+        expect(parentNode?.children?.[1]).toEqual({ id: 6, name: '', parentId: 1, children: [] });
         expect(state.counter).toBe(7);
         expect(state.tree).not.toBe(initialState.tree);
     });
@@ -113,8 +113,8 @@ describe('useNodeStore', () => {
         expect(state.selectedNodeId).toBeNull();
         expect(state.counter).toBe(6);
         expect(state.tree).toEqual([
-            { id: 1, name: 'Корневой узел 1', children: [{ id: 2, name: 'Дочерний узел 1', children: [] }] },
-            { id: 3, name: 'Корневой узел 2', children: [{ id: 4, name: 'Дочерний узел 2', children: [] }] },
+            { id: 1, name: 'Корневой узел 1', children: [{ id: 2, name: 'Дочерний узел 1', parentId: 1, children: [] }] },
+            { id: 3, name: 'Корневой узел 2', children: [{ id: 4, name: 'Дочерний узел 2', parentId: 3, children: [] }] },
             { id: 5, name: 'Корневой узел 3', children: [] },
         ]);
     });
