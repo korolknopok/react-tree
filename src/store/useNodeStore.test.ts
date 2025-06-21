@@ -38,7 +38,7 @@ describe('useNodeStore', () => {
 
         const state = useNodeStore.getState();
         expect(state.tree).toHaveLength(4);
-        expect(state.tree[3]).toEqual({ id: 6, name: 'Node 6', children: [] });
+        expect(state.tree[3]).toEqual({ id: 6, name: '', children: [] });
         expect(state.counter).toBe(7);
         expect(state.tree).not.toBe(initialState.tree);
     });
@@ -50,7 +50,7 @@ describe('useNodeStore', () => {
         const state = useNodeStore.getState();
         const parentNode = state.tree.find((node) => node.id === 1);
         expect(parentNode?.children).toHaveLength(2);
-        expect(parentNode?.children?.[1]).toEqual({ id: 6, name: 'Node 6', children: [] });
+        expect(parentNode?.children?.[1]).toEqual({ id: 6, name: '', children: [] });
         expect(state.counter).toBe(7);
         expect(state.tree).not.toBe(initialState.tree);
     });

@@ -4,7 +4,7 @@ import {useNodeStore} from "./store/useNodeStore.ts";
 import {memo, useCallback} from "react";
 
 export const App = memo(() => {
-    const {tree, selectedNodeId, addChildToNode, deleteNodeById, editNode, reset} = useNodeStore();
+    const {tree, selectedNodeId, addChildToNode, deleteNodeById, editNode, reset, setEditingNodeId} = useNodeStore();
 
 
     const handleAdd = useCallback(() => {
@@ -16,8 +16,9 @@ export const App = memo(() => {
     },[selectedNodeId, deleteNodeById]);
 
     const handleEdit = useCallback(() => {
-        const newName = prompt('Enter new name:')?.trim() || 'Node';
-        editNode(selectedNodeId, newName);
+        if (selectedNodeId !== null) {
+            setEditingNodeId(selectedNodeId);
+        }
     }, [selectedNodeId, editNode]);
 
     const handleReset = useCallback(() => {
