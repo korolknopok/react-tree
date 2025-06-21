@@ -6,17 +6,17 @@ import React, {memo, useEffect, useRef, useState} from "react";
 interface TreeNodeProps {
     id: number;
     name: string;
-    children?: TreeData[];
+    parentId?: number;
+    children: TreeData[];
 }
 
 export const TreeNode = memo(({id, name, children}: TreeNodeProps) => {
-    const selectedNodeId = useNodeStore(state => state.selectedNodeId);
+    const isSelected = useNodeStore(state => state.selectedNodeId === id);
     const setSelectedNodeId = useNodeStore(state => state.setSelectedNodeId);
-    const editingNodeId = useNodeStore(state => state.editingNodeId);
+    const isEditing = useNodeStore(state => state.editingNodeId === id);
     const setEditingNodeId = useNodeStore(state => state.setEditingNodeId);
     const editNode = useNodeStore(state => state.editNode);
 
-    const isEditing = editingNodeId === id;
     const inputRef = useRef<HTMLInputElement>(null);
     const [inputValue, setInputValue] = useState(name);
     const [previousName, setPreviousName] = useState(name);
@@ -57,7 +57,6 @@ export const TreeNode = memo(({id, name, children}: TreeNodeProps) => {
         setEditingNodeId(null);
     }
 
-
     const handleInputBlur = () => {
         finishEditing();
     }
@@ -73,9 +72,9 @@ export const TreeNode = memo(({id, name, children}: TreeNodeProps) => {
             {isEditing ? (
                 <input
                     role="textbox"
-                    type ="text"
-                    className={`node-label ${selectedNodeId === id ? "selected" : ''}`}
-                    value ={inputValue}
+                    type="text"
+                    className={`node-label ${isSelected ? "selected" : ''}`}
+                    value={inputValue}
                     onChange={handleInputChange}
                     onBlur={handleInputBlur}
                     onKeyDown={handleInputKeyDown}
@@ -83,7 +82,7 @@ export const TreeNode = memo(({id, name, children}: TreeNodeProps) => {
                 />
             ) : (
                 <label
-                    className={`node-label ${selectedNodeId === id ? "selected" : ''}`}
+                    className={`node-label ${isSelected ? "selected" : ''}`}
                     onClick={handleNodeClick}
                     onDoubleClick={handleDoubleClick}
                 >
@@ -92,17 +91,18 @@ export const TreeNode = memo(({id, name, children}: TreeNodeProps) => {
             )}
 
             {children && children.length > 0 && (
-                <ul className="node-children">
+                <p className="node-children">
                     {children.map((child) => (
                         <li key={child.id}>
                             <TreeNode
                                 id={child.id}
                                 name={child.name}
+                                parentId={id}
                                 children={child.children}
                             />
                         </li>
                     ))}
-                </ul>
+                </p>
             )}
         </div>
     )
